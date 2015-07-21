@@ -16,17 +16,21 @@ namespace CustomTagHelperSample.TagHelpers
         public string ActionName { get; set; }
         public string MenuText { get; set; }
                   
-        [Activate]
+        [ViewContext]
         public ViewContext ViewContext { get; set; }
+                
+        public IUrlHelper _UrlHelper { get; set; }
 
-        [Activate]
-        public IUrlHelper UrlHelper { get; set; }
+        public MenuLinkTagHelper(IUrlHelper urlHelper)
+        {
+            _UrlHelper = urlHelper;
+        }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
             StringBuilder sb = new StringBuilder();
                         
-            string menuUrl = UrlHelper.Action(ActionName, ControllerName);
+            string menuUrl = _UrlHelper.Action(ActionName, ControllerName);
                         
             output.TagName = "li";
             
