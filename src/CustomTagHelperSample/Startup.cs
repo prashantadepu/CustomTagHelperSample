@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Diagnostics;
+﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Routing;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.Logging;
-using Microsoft.Framework.Logging.Console;
-using Microsoft.Framework.Runtime;
-using Microsoft.Framework.Configuration;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace CustomTagHelperSample
 {
@@ -30,8 +22,8 @@ namespace CustomTagHelperSample
 
         // This method gets called by the runtime.
         public void ConfigureServices(IServiceCollection services)
-        {            
-            services.Configure<AppSettings>(Configuration.GetConfigurationSection("AppSettings"));
+        {
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             // Add MVC services to the services container.
             services.AddMvc();
@@ -53,14 +45,15 @@ namespace CustomTagHelperSample
             // Add the following to the request pipeline only in development environment.
             if (env.IsEnvironment("Development"))
             {
-                //app.UseBrowserLink();
-                app.UseErrorPage(ErrorPageOptions.ShowAll);
+                app.UseBrowserLink();
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
             }
             else
             {
                 // Add Error handling middleware which catches all application specific errors and
                 // send the request to the following path or controller action.
-                app.UseErrorHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Error");
             }
 
             // Add static files to the request pipeline.
