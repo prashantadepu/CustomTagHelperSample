@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Rendering;
-using Microsoft.AspNet.Mvc.ViewFeatures;
-using Microsoft.AspNet.Razor.TagHelpers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using System;
 using System.Text;
 
@@ -17,9 +18,9 @@ namespace CustomTagHelperSample.TagHelpers
         [ViewContext]
         public ViewContext ViewContext { get; set; }
 
-        public IUrlHelper _UrlHelper { get; set; }
+        public IUrlHelperFactory _UrlHelper { get; set; }
 
-        public MenuLinkTagHelper(IUrlHelper urlHelper)
+        public MenuLinkTagHelper(IUrlHelperFactory urlHelper)
         {
             _UrlHelper = urlHelper;
         }
@@ -28,7 +29,9 @@ namespace CustomTagHelperSample.TagHelpers
         {
             StringBuilder sb = new StringBuilder();
 
-            string menuUrl = _UrlHelper.Action(ActionName, ControllerName);
+            var urlHelper = _UrlHelper.GetUrlHelper(ViewContext);
+
+            string menuUrl = urlHelper.Action(ActionName, ControllerName);
 
             output.TagName = "li";
 
@@ -47,7 +50,7 @@ namespace CustomTagHelperSample.TagHelpers
                 output.Attributes.Add("class", "active");
             }
 
-            output.Content.Append(a);
+            output.Content.AppendHtml(a);
         }
     }
 }
